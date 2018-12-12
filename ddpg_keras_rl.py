@@ -54,7 +54,7 @@ agent = DDPGAgent(nb_actions=nb_actions, actor=actor, critic=critic, critic_acti
 agent.compile(Adam(lr=0.001,  clipnorm=1.), metrics=['mae'])
 
 # Okay, now it's time to learn something!
-mode = 'train'
+mode = 'test'
 if mode == 'train':
     hist = agent.fit(env, nb_steps=300000, visualize=False, verbose=2, nb_max_episode_steps=1000)
     filename = '300kit_rn4_maior2_mem20k_target01_theta3_batch32_adam2'

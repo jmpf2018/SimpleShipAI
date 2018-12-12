@@ -12,7 +12,7 @@ class ShipEnv(Env):
     def __init__(self, type='continuous', action_dim = 1):
         self.type = type
         self.action_dim = action_dim
-        self.observation_space = spaces.Box(low=np.array([0, -np.pi / 2, 0, -4, -0.2]), high=np.array([150, np.pi / 2, 4.0, 4.0, 0.2]))
+        self.observation_space = spaces.Box(low=np.array([0, -np.pi / 2, 0, -4, -0.2]), high=np.array([150, np.pi / 2, 5.0, 4.0, 0.2]))
         self.init_space = spaces.Box(low=np.array([0, -np.pi / 15, 1.0, 0.2, -0.01]), high=np.array([30, np.pi / 15, 1.5, 0.3, 0.01]))
         self.ship_data = None
         self.last_pos = np.zeros(3)
@@ -61,9 +61,11 @@ class ShipEnv(Env):
     def calculate_reward(self, obs):
         d, theta, vx, vy, thetadot = obs[0], obs[1]*180/np.pi, obs[2], obs[3], obs[4]*180/np.pi
         if not self.observation_space.contains(obs):
+            print("\n Action: %f,  State[%f %f %f], Velocidade [%f , %f] , Theta: %f, Distance: %f thetadot: %f \n" % (self.last_action[0], self.last_pos[0], self.last_pos[1], self.last_pos[2], vx, vy, theta, d, thetadot))
             return -1000
         else:
-            return (4*(vx-1.5) + 5*(1-d/20) + 2*(1-vy**2/10) + 5*(1-np.abs(theta/30)) + 3*(1 - np.abs(thetadot)/12)) / 24
+            return 1-8*np.abs(theta/90)-np.abs(thetadot/20)-5*np.abs(d)/150-np.abs(vy/4)-np.abs(vx-2)/2
+
 
     def end(self, state_prime, obs):
         if not self.observation_space.contains(obs) or -1 > state_prime[0] or state_prime[0] > self.max_x_episode[0] or 160 < state_prime[1] or state_prime[1]< -160:
